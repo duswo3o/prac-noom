@@ -1,3 +1,5 @@
+const messageList = document.querySelector("ul");
+const messageForm = document.querySelector("form");
 // backend에 연결
 const socket = new WebSocket(`ws://${window.location.host}`);
 
@@ -16,8 +18,18 @@ socket.addEventListener("close", () => {
   console.log("Disconnected to Server ❌");
 });
 
-// 메세지 보내기
-// 즉시 실행되는 것을 원하지 않기 때문에 setTimeout 사용
-setTimeout(() => {
-  socket.send("hello from the Browser!");
-}, 10000);
+// // 메세지 보내기
+// // 즉시 실행되는 것을 원하지 않기 때문에 setTimeout 사용
+// setTimeout(() => {
+//   socket.send("hello from the Browser!");
+// }, 10000);
+
+function handleSubmit(event) {
+  event.preventDefault();
+  const input = messageForm.querySelector("input");
+  socket.send(input.value);
+  //   console.log(input.value);
+  input.value = "";
+}
+
+messageForm.addEventListener("submit", handleSubmit);
