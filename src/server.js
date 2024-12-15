@@ -47,19 +47,28 @@ function publicRooms() {
 
 wsServer.on("connection", (socket) => {
   socket["nickname"] = "Anonymous";
+  // 이벤트 발생시 실행
   socket.onAny((event) => {
     console.log(`Socket Event:${event}`);
   });
+  // room 입장시 실행
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);
     done();
     socket.to(roomName).emit("welcome", socket.nickname);
+    wsServer.sockets.emit("room_change", publicRooms());
   });
+  // 연결 종료 직전에 발생
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => {
       socket.to(room).emit("bye", socket.nickname);
     });
   });
+  // 연결 종료 후 실행
+  socket.on("disconnect", () => {
+    wsServer.sockets.emit("room_change", publicRooms());
+  });
+  // 새로운 메세지 입력시 실행
   socket.on("new_message", (msg, room, done) => {
     socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
     done();
