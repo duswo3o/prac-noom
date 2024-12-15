@@ -25,6 +25,26 @@ const httpServer = http.createServer(app); // http 서버
 // const wss = new WebSocket.Server({ server }); // ws 서버
 const wsServer = SocketIO(httpServer); // socket IO 서버
 
+// public room 반환 함수
+function publicRooms() {
+  const {
+    sockets: {
+      adapter: { sids, rooms },
+    },
+  } = wsServer;
+  //   const sids = wsServer.socket.adapter.sids;
+  //   const rooms = wsServer.socket.adapter.rooms;
+
+  // public room list 만들기
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if (sids.get(key) === undefined) {
+      publicRooms.push(key);
+    }
+  });
+  return publicRooms;
+}
+
 wsServer.on("connection", (socket) => {
   socket["nickname"] = "Anonymous";
   socket.onAny((event) => {
