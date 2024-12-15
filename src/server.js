@@ -1,6 +1,8 @@
 import http from "http";
 // import WebSocket from "ws";
-import SocketIO from "socket.io";
+// import SocketIO from "socket.io";
+import { Server } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 
 const app = express();
@@ -23,7 +25,18 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 
 const httpServer = http.createServer(app); // http 서버
 // const wss = new WebSocket.Server({ server }); // ws 서버
-const wsServer = SocketIO(httpServer); // socket IO 서버
+// const wsServer = SocketIO(httpServer); // socket IO 서버
+const wsServer = new Server(httpServer, {
+  cors: {
+    origin: ["https://admin.socket.io"],
+    credentials: true,
+  },
+});
+
+instrument(wsServer, {
+  auth: false,
+  mode: "development",
+});
 
 // public room 반환 함수
 function publicRooms() {
