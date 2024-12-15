@@ -26,12 +26,12 @@ const httpServer = http.createServer(app); // http 서버
 const wsServer = SocketIO(httpServer); // socket IO 서버
 
 wsServer.on("connection", (socket) => {
-  //   console.log(socket);
+  socket.onAny((event) => {
+    console.log(`Socket Event:${event}`);
+  });
   socket.on("enter_room", (roomName, done) => {
-    console.log(roomName);
-    setTimeout(() => {
-      done("hello from the backend");
-    }, 5000);
+    socket.join(roomName);
+    done();
   });
 });
 
