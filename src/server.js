@@ -26,7 +26,13 @@ const httpServer = http.createServer(app); // http 서버
 const wsServer = SocketIO(httpServer); // socket IO 서버
 
 wsServer.on("connection", (socket) => {
-  console.log(socket);
+  //   console.log(socket);
+  socket.on("enter_room", (msg, done) => {
+    console.log(msg);
+    setTimeout(() => {
+      done();
+    }, 10000);
+  });
 });
 
 // // fake Database
