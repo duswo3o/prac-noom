@@ -105,12 +105,12 @@ async function handleCamerachange() {
   await getMedia(cameraSelect.value); // 새로운 stream 생성
   if (myPeerConnection) {
     // console.log(myPeerConnection.getSenders());
-    const videoTrack = myStream.getVideoTracks()[0]
+    const videoTrack = myStream.getVideoTracks()[0];
     const videoSender = myPeerConnection
       .getSenders()
       .find((sender) => sender.track.kind === "video");
     // console.log(videoSender);
-    videoSender.replaceTrack(videoTrack)
+    videoSender.replaceTrack(videoTrack);
   }
 }
 
@@ -177,7 +177,19 @@ socket.on("ice", (ice) => {
 // RTC Code
 
 function makeConnection() {
-  myPeerConnection = new RTCPeerConnection();
+  myPeerConnection = new RTCPeerConnection({
+    iceServers: [
+      {
+        urls: [
+          "stun:stun.l.google.com:19302",
+          "stun:stun1.l.google.com:19302",
+          "stun:stun2.l.google.com:19302",
+          "stun:stun3.l.google.com:19302",
+          "stun:stun4.l.google.com:19302",
+        ],
+      },
+    ],
+  });
   myPeerConnection.addEventListener("icecandidate", handleIce);
   myPeerConnection.addEventListener("addstream", handleAddStream);
   // console.log(myStream.getTracks());
