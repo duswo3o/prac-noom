@@ -54,13 +54,13 @@ async function getMedia(deviceId) {
     myStream = await navigator.mediaDevices.getUserMedia(
       deviceId ? cameraConstrains : initialConstrains
     );
-    // off 상태로 시작하기
-    myStream.getAudioTracks().forEach((track) => {
-      track.enabled = false;
-    });
-    myStream.getVideoTracks().forEach((track) => {
-      track.enabled = false;
-    });
+    // // off 상태로 시작하기
+    // myStream.getAudioTracks().forEach((track) => {
+    //   track.enabled = false;
+    // });
+    // myStream.getVideoTracks().forEach((track) => {
+    //   track.enabled = false;
+    // });
     // 비디오 넣어주기
     myFace.srcObject = myStream;
     // select option 설정
@@ -102,7 +102,16 @@ function handleCameraClick() {
 
 async function handleCamerachange() {
   // console.log(cameraSelect.value);
-  await getMedia(cameraSelect.value);
+  await getMedia(cameraSelect.value); // 새로운 stream 생성
+  if (myPeerConnection) {
+    // console.log(myPeerConnection.getSenders());
+    const videoTrack = myStream.getVideoTracks()[0]
+    const videoSender = myPeerConnection
+      .getSenders()
+      .find((sender) => sender.track.kind === "video");
+    // console.log(videoSender);
+    videoSender.replaceTrack(videoTrack)
+  }
 }
 
 muteBtn.addEventListener("click", handleMuteClick);
